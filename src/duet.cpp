@@ -1,5 +1,5 @@
 #include "Iaircraft.cpp"
-//#include <Servo.h>
+#include <Servo.h>
 
 
 class Duet : public Iaircraft {
@@ -10,7 +10,7 @@ public:
     int num_channels;
 
     void init() {
-        
+        elevator_servo.attach(elevator_pin);
     }
 
     void updateThrottle(int input) {
@@ -53,4 +53,8 @@ private:
     void writeThrottle() {
         //Serial.print(fc.throttle);
     }
+
+    Servo elevator_servo;
+    int elevator_pin = 3;
+
 };

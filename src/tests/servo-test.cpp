@@ -1,7 +1,5 @@
 #include <Servo.h>
 #include <Arduino.h>
-const int TC4;
-TC4 = 4;
 
 //Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
