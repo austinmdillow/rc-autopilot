@@ -1,12 +1,18 @@
 #include "Iaircraft.cpp"
 //#include <Servo.h>
 
+
 class Duet : public Iaircraft {
 public:
     
     Flight_controls fc;
-    char aircraft_name;
+    //string aircraft_name;
     int num_channels;
+
+    void init() {
+        
+    }
+
     void updateThrottle(int input) {
         fc.throttle = input * 2;
     }
