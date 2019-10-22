@@ -1,4 +1,8 @@
 #include <Arduino.h>
+#include "duet.cpp"
+//#include "Iaircraft.cpp"
+
+Duet plane;
 
 void setup() {
   // put your setup code here, to run once:
