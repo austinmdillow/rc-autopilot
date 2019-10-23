@@ -6,10 +6,16 @@
 #include <Arduino.h>
 #include "duet.cpp"
 #include "AcPID.cpp"
+#include "PID_v1.h"
 //#include "Iaircraft.cpp"
 
 Duet plane;
-PID yawControl;
+//Define Variables we'll be connecting to
+double Setpoint, Input, Output;
+
+//Specify the links and initial tuning parameters
+double Kp=2, Ki=5, Kd=1;
+PID rollControl(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 enum Flying_states {
   Landed,
