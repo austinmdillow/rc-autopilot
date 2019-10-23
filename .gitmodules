@@ -4,3 +4,6 @@
 [submodule "lib/Arduino-PID-Library"]
 	path = lib/Arduino-PID-Library
 	url = https://github.com/br3ttb/Arduino-PID-Library.git
+[submodule "lib/Embedded-PID"]
+	path = lib/Embedded-PID
+	url = https://github.com/austinmdillow/Embedded-PID.git

@@ -7,6 +7,7 @@
 #include "duet.cpp"
 #include "AcPID.cpp"
 #include "PID_v1.h"
+#include <PID_Em.h>
 //#include "Iaircraft.cpp"
 
 Duet plane;
