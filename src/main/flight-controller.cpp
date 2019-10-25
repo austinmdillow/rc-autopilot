@@ -7,6 +7,7 @@
 #include "duet.cpp"
 #include "AcPID.cpp"
 //#include <PID_v1.h>
+#include "flight-radio.cpp"
 #include <PID_Em.h>
 //#include "Iaircraft.cpp"
 
@@ -25,7 +26,6 @@ double roll_kp=5, roll_ki=1, roll_kd=1;
 PID_Em rollControl(&roll_input, &roll_output, &roll_setpoint, roll_kp, roll_ki, roll_kd);
 
 
-
 enum Flying_states {
   Manual,
   Landed,
@@ -42,7 +42,7 @@ struct Error {
 };
 
 void manualControl() {
-  
+  Serial.print(data_rx.target_id);
 }
 
 void performTakeoff() {
