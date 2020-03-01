@@ -1,2 +1,7 @@
 # rc_autopilot
-cxc
+
+
+laircraft.cpp is an interface
+|
+|
+-> duet.cpp implements that interface

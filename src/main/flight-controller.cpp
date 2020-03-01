@@ -7,13 +7,14 @@
 #include "duet.cpp"
 #include "AcPID.cpp"
 //#include <PID_v1.h>
-//#include "flight-radio.cpp"
+#include "flight-radio.cpp"
 #include <PID_Em.h>
 //#include <RF24.h>
 #include <SPI.h>
 //#include <RF24.h>
 byte addressesQ[][6] = {"1Node","2Node"};
 
+/*
 struct Remote {
   byte target_id = 1;
   byte pot_1;
@@ -32,8 +33,9 @@ struct Remote {
   bool trim_L;
   bool trim_R;
 };
+*/
 
-Remote data_in;
+//Remote data;
 //RF24 flightRadio(9,10);
 
 /**
@@ -120,6 +122,7 @@ void errorHandler() {
 void setup() {
   // put your setup code here, to run once:
   pidSetup();
+  //setupRadio();
 }
 
 void pidSetup() {

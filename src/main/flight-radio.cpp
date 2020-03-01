@@ -24,8 +24,9 @@ struct Remote {
   bool trim_R;
 };
 
-Remote data_rx;
 
+struct Remote data_rx;
+/*
 RF24 flightRadio(9,10);
 
 void setupRadio() {
@@ -44,3 +45,4 @@ void readRadio() {
     }
   }
 }
+*/
