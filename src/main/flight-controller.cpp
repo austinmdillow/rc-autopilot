@@ -37,6 +37,7 @@ struct Remote {
 
 //Remote data;
 //RF24 flightRadio(9,10);
+RF24 flightRadio(9,10);
 
 /**
 void setupRadio() {

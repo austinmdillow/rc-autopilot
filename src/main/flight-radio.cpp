@@ -25,9 +25,9 @@ struct Remote {
 };
 
 
-struct Remote data_rx;
-/*
-RF24 flightRadio(9,10);
+extern struct Remote data_rx;
+
+
 
 void setupRadio() {
   flightRadio.begin();
@@ -45,4 +45,3 @@ void readRadio() {
     }
   }
 }
-*/
