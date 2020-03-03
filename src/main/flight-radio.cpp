@@ -1,3 +1,4 @@
+/*
 #include <Arduino.h>
 #include <RF24.h>
 
@@ -24,10 +25,7 @@ struct Remote {
   bool trim_R;
 };
 
-
-extern struct Remote data_rx;
-
-
+struct Remote data_rx;
 
 void setupRadio() {
   flightRadio.begin();
@@ -45,3 +43,4 @@ void readRadio() {
     }
   }
 }
+*/

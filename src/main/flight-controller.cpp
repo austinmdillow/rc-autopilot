@@ -7,11 +7,12 @@
 #include "duet.cpp"
 #include "AcPID.cpp"
 //#include <PID_v1.h>
-#include "flight-radio.cpp"
+#include "Flight_radio.h"
 #include <PID_Em.h>
-//#include <RF24.h>
+#include <RF24.h>
 #include <SPI.h>
 //#include <RF24.h>
+const float VERSION = 1.0;
 byte addressesQ[][6] = {"1Node","2Node"};
 
 /*
@@ -37,7 +38,7 @@ struct Remote {
 
 //Remote data;
 //RF24 flightRadio(9,10);
-RF24 flightRadio(9,10);
+//extern RF24 flightRadio(9,10);
 
 /**
 void setupRadio() {
@@ -63,6 +64,7 @@ void pidSetup();
 
 
 Duet plane;
+Flight_radio flight_radio(8,9);
 
 // Define PID parameters and IO for PID control
 double roll_input, roll_output;
@@ -78,15 +80,24 @@ enum Flying_states {
   Landed,
   Takeoff,
   Cruise,
-  Stall
+  Stall,
+  Test
 };
-Flying_states flying_state = Landed;
+
+Flying_states flying_state = Test;
 
 struct Error {
   int id;
   String description;
   unsigned long time_occurred;
 };
+
+void test_controller() {
+  plane.commandElevator(0);
+  plane.commandAileron(5);
+  plane.commandThrottle(0);
+  delay(1000);
+}
 
 void manualControl() {
   //Serial.print(data_rx.target_id);
@@ -98,6 +109,10 @@ void performTakeoff() {
   delay(500);
   plane.updateElevator(0);
 
+}
+
+void scheduled_tasks() {
+  flight_radio.readRadio();
 }
 
 double getRoll() {
@@ -120,19 +135,29 @@ void errorHandler() {
 
 }
 
-void setup() {
-  // put your setup code here, to run once:
-  pidSetup();
-  //setupRadio();
-}
-
 void pidSetup() {
   rollControl.setOutputContraints(-90, 90);
   rollControl.setIntegralWindup(10, 20);
 }
 
+void debuggingSetup() {
+  Serial.begin(115200);
+  Serial.println("===== rc-autopilot =====");
+  Serial.print("Version: ");
+  Serial.println(VERSION);
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  pidSetup();
+  flight_radio.radio_setup();
+  debuggingSetup();
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
+  scheduled_tasks();
+
   if (flying_state == Landed) {
     performTakeoff();
   } else {
@@ -143,10 +168,11 @@ void loop() {
     case Manual: 
       manualControl();
       break;
+    case Test:
+      test_controller();
     default:
       manualControl();
   }
-
   
 }
 
