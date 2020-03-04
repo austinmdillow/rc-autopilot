@@ -5,12 +5,12 @@
 class Flight_Navigation {
   public:
     Flight_Navigation();
+    void displaySensorDetails();
 
   private:
-  
-  
-  int temp;
+
+    int temp;
 
 };
 
-#endif;
+#endif

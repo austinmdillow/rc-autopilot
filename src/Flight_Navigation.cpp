@@ -4,8 +4,11 @@
   #include "WProgram.h"
   #endif
 #include "Flight_Navigation.h"
+#include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_FXAS21002C.h>
+#include <Adafruit_FXOS8700.h>
+
 
 
 Flight_Navigation::Flight_Navigation() {
@@ -13,9 +16,9 @@ Flight_Navigation::Flight_Navigation() {
 }
 
 Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
+Adafruit_FXOS8700 accelmag = Adafruit_FXOS8700(0x8700A, 0x8700B);
 
-void displaySensorDetails(void)
-{
+void displaySensorDetails() {
   sensor_t sensor;
   gyro.getSensor(&sensor);
   Serial.println("------------------------------------");
