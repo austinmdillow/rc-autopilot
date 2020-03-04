@@ -12,7 +12,7 @@
 #include <RF24.h>
 #include <SPI.h>
 //#include <RF24.h>
-const float VERSION = 1.0;
+const String VERSION = "1.0";
 byte addressesQ[][6] = {"1Node","2Node"};
 
 /*
@@ -93,10 +93,26 @@ struct Error {
 };
 
 void test_controller() {
+  static int count = 0;
   plane.commandElevator(0);
   plane.commandAileron(5);
-  plane.commandThrottle(0);
+  plane.commandThrottle(count);
   delay(1000);
+  Serial.println(plane.fc.throttle);
+  count++;
+
+  int num_ops = 10000;
+  volatile float out_num;
+  unsigned long time_start = micros();
+  for (int i = 0; i < num_ops; i++) {
+    out_num = 284 * i;
+  }
+  unsigned long time_end = micros();
+  Serial.print("Time to perform operations = ");
+  Serial.println(time_end-time_start);
+  Serial.print("Ops per second = ");
+  Serial.println(num_ops/(float((time_end-time_start)/1000000.0)));
+
 }
 
 void manualControl() {
@@ -112,7 +128,7 @@ void performTakeoff() {
 }
 
 void scheduled_tasks() {
-  flight_radio.readRadio();
+  //flight_radio.readRadio();
 }
 
 double getRoll() {
@@ -141,35 +157,41 @@ void pidSetup() {
 }
 
 void debuggingSetup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("===== rc-autopilot =====");
   Serial.print("Version: ");
   Serial.println(VERSION);
+  delay(3000);
+  Serial.print(45);
 }
 
 void setup() {
+  delay(1000);
   // put your setup code here, to run once:
   pidSetup();
   flight_radio.radio_setup();
   debuggingSetup();
+  Serial.println("end of setup");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  Serial.println("top of loop");
   scheduled_tasks();
-
+  /*
   if (flying_state == Landed) {
     performTakeoff();
   } else {
     performCruise(5, 3);
   }
-
+  */
+  
   switch (flying_state) {
     case Manual: 
       manualControl();
       break;
     case Test:
       test_controller();
+      break;
     default:
       manualControl();
   }

@@ -3,7 +3,6 @@
   #else
   #include "WProgram.h"
   #endif
-
 #include <Flight_radio.h>
 #include <RF24.h>
 
