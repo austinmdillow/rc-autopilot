@@ -8,12 +8,16 @@
 #include "AcPID.cpp"
 //#include <PID_v1.h>
 #include "Flight_radio.h"
+#include "Flight_Navigation.h"
 #include <PID_Em.h>
 #include <RF24.h>
 #include <SPI.h>
 //#include <RF24.h>
 const String VERSION = "1.0";
 byte addressesQ[][6] = {"1Node","2Node"};
+
+const int internal_led_pin = 13;
+bool internal_led_state = true;
 
 /*
 struct Remote {
@@ -65,6 +69,9 @@ void pidSetup();
 
 Duet plane;
 Flight_radio flight_radio(8,9);
+//Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
+Flight_Navigation flight_nav;
+
 
 // Define PID parameters and IO for PID control
 double roll_input, roll_output;
@@ -92,27 +99,22 @@ struct Error {
   unsigned long time_occurred;
 };
 
+void sensorDebug() {
+  //flight_nav.displaySensorDetails();
+}
+
 void test_controller() {
+  
   static int count = 0;
   plane.commandElevator(0);
   plane.commandAileron(5);
   plane.commandThrottle(count);
-  delay(1000);
   Serial.println(plane.fc.throttle);
   count++;
+  //flight_nav.sensorDebug();
+  //flight_nav.displaySensorDetails();
 
-  int num_ops = 10000;
-  volatile float out_num;
-  unsigned long time_start = micros();
-  for (int i = 0; i < num_ops; i++) {
-    out_num = 284 * i;
-  }
-  unsigned long time_end = micros();
-  Serial.print("Time to perform operations = ");
-  Serial.println(time_end-time_start);
-  Serial.print("Ops per second = ");
-  Serial.println(num_ops/(float((time_end-time_start)/1000000.0)));
-
+  delay(300);
 }
 
 void manualControl() {
@@ -128,7 +130,16 @@ void performTakeoff() {
 }
 
 void scheduled_tasks() {
+  static unsigned long last_blink_time = millis();
+  int blink_interval = 700;
   //flight_radio.readRadio();
+
+  if (millis() - last_blink_time > blink_interval) {
+    internal_led_state = !internal_led_state;
+    digitalWrite(internal_led_pin, internal_led_state);
+    last_blink_time = millis();
+  }
+
 }
 
 double getRoll() {
@@ -170,8 +181,11 @@ void setup() {
   // put your setup code here, to run once:
   pidSetup();
   flight_radio.radio_setup();
+  flight_nav.setup();
   debuggingSetup();
+  pinMode(internal_led_pin, OUTPUT); // set the mode of the built in LED
   Serial.println("end of setup");
+  
 }
 
 void loop() {
@@ -191,6 +205,7 @@ void loop() {
       break;
     case Test:
       test_controller();
+      //sensorDebug();
       break;
     default:
       manualControl();
