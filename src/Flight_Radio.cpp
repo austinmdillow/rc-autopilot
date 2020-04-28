@@ -36,7 +36,7 @@ bool Flight_Radio::rxRadio() {
 bool Flight_Radio::txRadio(radio_t* tx) {
   static unsigned long last_tx_time = millis();
   unsigned long current_millis = millis();
-  bool success;
+  bool success = false;
   if (current_millis - last_tx_time > (1000 / _tx_rate_set)) {
     
     transceiver.stopListening();

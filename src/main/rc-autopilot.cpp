@@ -4,52 +4,27 @@
  */
 
 #include <Arduino.h>
-#include "duet.cpp"
+#include "aeroscout.cpp"
 #include "AcPID.cpp"
 //#include <PID_v1.h>
-#include "Flight_Radio.h"
-#include "Flight_Navigation.h"
 #include <PID_Em.h>
-#include <RF24.h>
-#include <SPI.h>
-//#include <RF24.h>
+#include "Flight_Telemetry.h"
+#include "Flight_Logger.h"
+#include "Flight_Radio.h"
+
 const String VERSION = "0.2";
-byte addressesQ[][6] = {"1Node","2Node"};
 
 const int internal_led_pin = 13;
 bool internal_led_state = true;
 
-//Remote data;
-//RF24 flightRadio(9,10);
-//extern RF24 flightRadio(9,10);
-
-/**
-void setupRadio() {
-  flightRadio.begin();
-  flightRadio.setPALevel(RF24_PA_LOW);
-  flightRadio.openWritingPipe(addressesQ[0]);
-  flightRadio.openReadingPipe(1,addressesQ[1]);
-  flightRadio.startListening();
-}
-
-void readRadio() {
-  if(flightRadio.available()){
-    // Variable for the received timestamp
-    while (flightRadio.available()) {                                   // While there is data ready
-      flightRadio.read( &data_in, sizeof(data_in) );             // Get the payload
-    }
-  }
-}
-*/
 
 void manualControl();
 void pidSetup();
 
 
-Duet plane;
+Aeroscout plane;
 Flight_Radio flight_radio(8,9);
 //Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
-Flight_Navigation flight_nav;
 
 
 // Define PID parameters and IO for PID control
@@ -159,8 +134,6 @@ void setup() {
   delay(1000);
   // put your setup code here, to run once:
   pidSetup();
-  flight_radio.begin();
-  flight_nav.setup();
   debuggingSetup();
   pinMode(internal_led_pin, OUTPUT); // set the mode of the built in LED
   Serial.println("end of setup");
