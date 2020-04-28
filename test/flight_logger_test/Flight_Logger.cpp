@@ -5,6 +5,8 @@
 #endif
 #include "Flight_Logger.h"
 
+const float rate_alpha = 0.25;
+
 Flight_Logger::Flight_Logger(int chip_select) {
   _chipSelect = chip_select;
 }
@@ -29,32 +31,6 @@ bool Flight_Logger::begin() {
 bool Flight_Logger::end() {
   _dataFile.close();
   return true;
-}
-
-void Flight_Logger::setGPSLoggingRate(int hz) {
-  if (hz <= 0) {
-    PRINTLN("Logging rate too slow");
-    return;
-  } else if (hz > 1000) {
-    PRINTLN("Logging rate too fast");
-    return;
-  } else {
-    this->_gps_rate_set = hz;
-    this->_gps_period = 1000 / hz;
-  }
-}
-
-void Flight_Logger::setIMULoggingRate(int hz) {
-  if (hz <= 0) {
-    PRINTLN("Logging rate too slow");
-    return;
-  } else if (hz > 1000) {
-    PRINTLN("Logging rate too fast");
-    return;
-  } else {
-    this->_imu_rate_set = hz;
-    this->_imu_period = 1000 / hz;
-  }
 }
 
 bool Flight_Logger::getFilename() {
@@ -101,7 +77,7 @@ bool Flight_Logger::logGPS(gps_t* gps_data) {
     sprintf(gps_str, "%d;GPS;LLA:%.6f,%.6f,%.1f;T:%02d-%02d-%02d_%02d-%02d-%02d",current_millis, gps_data->latitude, gps_data->longitude, gps_data->altitude, gps_data->year, gps_data->month, gps_data->day, gps_data->hour, gps_data->minute, gps_data->second);
     this->logData(gps_str);
     num_logs++;
-    _gps_rate_monitor = _gps_rate_monitor * .9 + 1000.0/(current_millis - last_gps_log_time) * 0.1;
+    _gps_rate_monitor = _gps_rate_monitor * (1-rate_alpha) + 1000.0/(current_millis - last_gps_log_time) * rate_alpha;
     last_gps_log_time = current_millis;
    }
 }
@@ -114,6 +90,7 @@ bool Flight_Logger::logIMU(telemetry_t* telemetry_data) {
     sprintf(telemetry_str, "%d;%s;A;%03.3f,%.3f,%.3f;G;%03.3f,%.3f,%.3f;M;%03.3f,%.3f,%.3f", current_millis, String("IMU").c_str(), telemetry_data->acceleration.x, telemetry_data->acceleration.y, telemetry_data->acceleration.z, telemetry_data->gyro.x, telemetry_data->gyro.y, telemetry_data->gyro.z, telemetry_data->magnetic.x, telemetry_data->magnetic.y, telemetry_data->magnetic.z);
     this->logData(telemetry_str);
     num_logs++;
+    _imu_rate_monitor = _imu_rate_monitor * (1-rate_alpha) + 1000.0/(current_millis - last_imu_log_time) * rate_alpha;
     last_imu_log_time = current_millis;
    }
 }
@@ -135,6 +112,36 @@ void Flight_Logger::loggerDumpSerial() {
     _dataFile.close();
     _dataFile = SD.open(_filename, FILE_WRITE);
   }
+}
+
+void Flight_Logger::setGPSLoggingRate(int hz) {
+  if (hz <= 0) {
+    PRINTLN("Logging rate too slow");
+    return;
+  } else if (hz > 1000) {
+    PRINTLN("Logging rate too fast");
+    return;
+  } else {
+    this->_gps_rate_set = hz;
+    this->_gps_period = 1000 / hz;
+  }
+}
+
+void Flight_Logger::setIMULoggingRate(int hz) {
+  if (hz <= 0) {
+    PRINTLN("Logging rate too slow");
+    return;
+  } else if (hz > 1000) {
+    PRINTLN("Logging rate too fast");
+    return;
+  } else {
+    this->_imu_rate_set = hz;
+    this->_imu_period = 1000 / hz;
+  }
+}
+
+void Flight_Logger::printRateMonitors() {
+  Serial.print("IMU, GPS rate: "); Serial.print(_imu_rate_monitor); Serial.print(" "); Serial.println(_gps_rate_monitor);
 }
 
 void Flight_Logger::error() {

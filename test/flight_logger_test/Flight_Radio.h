@@ -39,6 +39,8 @@ private:
   //uint64_t addresses[][6] = {0xF0F0F0F066};
   const byte slaveAddress[5] = {'R','x','A','A','A'};
   const byte masterAddress[5] = {'T','X','a','a','a'};
+  int _tx_rate_set = 100;
+  int _tx_rate_monitor;
 };
 
 #endif

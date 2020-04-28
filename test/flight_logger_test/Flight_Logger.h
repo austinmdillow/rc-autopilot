@@ -20,10 +20,11 @@ class Flight_Logger {
     void setGPSLoggingRate(int hz);
     void setIMULoggingRate(int hz);
     void loggerDumpSerial();
+    void printRateMonitors();
+    unsigned long num_logs;
 
   protected:
     byte status = 0;
-    unsigned long num_logs;
 
   private:
     int _imu_rate_set = 10; // default 10Hz logging

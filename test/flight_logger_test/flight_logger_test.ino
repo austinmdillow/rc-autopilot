@@ -33,7 +33,7 @@ void setup() {
 
   logger.begin();
   logger.setGPSLoggingRate(10);
-  logger.setIMULoggingRate(250);
+  logger.setIMULoggingRate(50);
   flt.begin();
   flt.displaySensorDetails();
   flt.printTelemetry();
@@ -53,7 +53,7 @@ void sdLogForTime() {
   unsigned long start_logging = millis();
   unsigned long last_gps_log_time = millis();
   unsigned long num_logs = 0;
-  const int logging_time = 1000;
+  const int logging_time = 10000;
 
   while (millis() - start_logging < logging_time) {
     unsigned long current_time_millis = millis();
@@ -66,14 +66,16 @@ void sdLogForTime() {
 
     flt.getGPS(&gps_data);
     logger.logGPS(&gps_data);
-
-    Serial.print("update Telemetry");
-    Serial.println(tel_end - tel_start);
-    Serial.print("time to log");
-    Serial.println(log_end - log_start);
+    
+    //logger.printRateMonitors();
+    //Serial.println();
+    //Serial.print("update Telemetry");
+    //Serial.println(tel_end - tel_start);
+    //Serial.print("time to log");
+    //Serial.println(log_end - log_start);
   }
   Serial.print("Logs recorded = ");
-  Serial.println(num_logs);
+  Serial.println(logger.num_logs);
 }
 
 void radioTest() {
@@ -88,8 +90,7 @@ void loop() {
   flt.printGPS();
   Serial.println("Starting Logging");
   unsigned long test_start = micros();
-  //sdWriteTest();
-  //sdLogForTime();
+  sdLogForTime();
   unsigned long test_end = micros();
   Serial.println("Done Logging");
   //logger.loggerDumpSerial();

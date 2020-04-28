@@ -285,3 +285,9 @@ void Flight_Telemetry::displaySensorDetails(void) {
   Serial.println("");
   delay(500);
 }
+
+/*
+void Flight_Telemetry::printRateMonitors() {
+  Serial.print("IMU, GPS rate: "); Serial.print(_imu_rate_monitor, _gps_rate_monitor);
+}
+*/

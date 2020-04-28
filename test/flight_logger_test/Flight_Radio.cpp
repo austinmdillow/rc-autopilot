@@ -22,6 +22,7 @@ void Flight_Radio::begin() {
 }
 
 bool Flight_Radio::rxRadio() {
+  
   if(transceiver.available()){
     // Variable for the received timestamp
     while (transceiver.available()) {                                   // While there is data ready
@@ -33,15 +34,21 @@ bool Flight_Radio::rxRadio() {
 }
 
 bool Flight_Radio::txRadio(radio_t* tx) {
+  static unsigned long last_tx_time = millis();
+  unsigned long current_millis = millis();
   bool success;
-  transceiver.stopListening();
-  if (!transceiver.write( &tx, sizeof(tx) )){
-    PRINTLN("tx failed."); 
-    success = false;     
-  } else {
-    PRINTLN("Tx Sucess!");
-    success = true;
+  if (current_millis - last_tx_time > (1000 / _tx_rate_set)) {
+    
+    transceiver.stopListening();
+    if (!transceiver.write( &tx, sizeof(tx) )){
+      PRINTLN("tx failed."); 
+      success = false;     
+    } else {
+      PRINTLN("Tx Sucess!");
+      success = true;
+    }
+    transceiver.startListening();
+    last_tx_time = current_millis;
   }
-  transceiver.startListening();
   return success;
 }
