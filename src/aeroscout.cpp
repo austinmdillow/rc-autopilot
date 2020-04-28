@@ -16,7 +16,7 @@
 #include <Servo.h>
 
 
-class Duet : public Aircraft_Interface {
+class Aeroscout : public Aircraft_Interface {
 
 private:
     Servo elevator_servo;
