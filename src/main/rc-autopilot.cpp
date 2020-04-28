@@ -11,6 +11,7 @@
 #include "Flight_Telemetry.h"
 #include "Flight_Logger.h"
 #include "Flight_Radio.h"
+#include "Flight_Controller.h"
 
 const String VERSION = "0.2";
 
@@ -23,6 +24,7 @@ void pidSetup();
 
 
 Aeroscout plane;
+Flight_Controller pilot;
 Flight_Radio flight_radio(8,9);
 //Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
 
