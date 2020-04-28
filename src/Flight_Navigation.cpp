@@ -70,7 +70,7 @@ void Flight_Navigation::sensorDebug() {
 
 
  sensors_event_t aevent, mevent;
- //accelmag.getEvent(&aevent, &mevent);
+ accelmag.getEvent(&aevent, &mevent);
   /*
   // Get a new sensor event
   
