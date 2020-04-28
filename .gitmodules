@@ -7,3 +7,9 @@
 [submodule "lib/Embedded-PID"]
 	path = lib/Embedded-PID
 	url = https://github.com/austinmdillow/Embedded-PID.git
+[submodule "lib/SD"]
+	path = lib/SD
+	url = https://github.com/arduino-libraries/SD.git
+[submodule "lib/Adafruit_AHRS"]
+	path = lib/Adafruit_AHRS
+	url = https://github.com/adafruit/Adafruit_AHRS.git
