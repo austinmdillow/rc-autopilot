@@ -26,10 +26,12 @@ class Flight_Logger {
     unsigned long num_logs;
 
   private:
-    int _imu_rate = 10; // default 10Hz logging
-    int _gps_rate = 10;
-    int _imu_period = 1000 / 10;
-    int _gps_period = 1000 / 10;
+    int _imu_rate_set = 10; // default 10Hz logging
+    int _imu_period;
+    float _imu_rate_monitor; // this is the actual rate
+    int _gps_rate_set = 10;
+    int _gps_period;
+    float _gps_rate_monitor;
     bool getFilename();
     void error(); // TODO needs to me implemented
     int _chipSelect;
@@ -37,6 +39,7 @@ class Flight_Logger {
     unsigned long _last_flush_time = millis();
     File _dataFile;
     char _filename[13];
+    
 };
 
 
