@@ -12,11 +12,11 @@
  */
 
 
-#include "Iaircraft.cpp"
+#include "Aircraft_Interface.cpp"
 #include <Servo.h>
 
 
-class Duet : public Iaircraft {
+class Duet : public Aircraft_Interface {
 
 private:
     Servo elevator_servo;

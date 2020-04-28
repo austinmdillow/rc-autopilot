@@ -1,15 +1,12 @@
-#ifndef Flight_radio_h
-#define Flight_radio_h
+#ifndef Flight_Radio_h
+#define Flight_Radio_h
+#include <SPI.h>
 #include <RF24.h>
 
-class Flight_radio {
-public:
-  Flight_radio(int pinA_in, int pinB_in);
+#define PRINTLN(a) (Serial.println(a))
+#define PRINT(a) (Serial.print(a))
 
-  void radio_setup();
-  void readRadio();
-
-  struct Remote {
+typedef struct {
     byte target_id = 1;
     byte pot_1;
     byte pot_2;
@@ -26,15 +23,24 @@ public:
     bool trim_D;
     bool trim_L;
     bool trim_R;
-  };
+  } radio_t;
+
+class Flight_Radio {
+public:
+  Flight_Radio(int pinA_in, int pinB_in);
+  void begin();
+  bool rxRadio();
+  bool txRadio(radio_t* tx);
 
 private:
   double kp, ki, kd;
   RF24 transceiver;
-  struct Remote data_rx;
+  radio_t data_rx;
   //uint64_t addresses[][6] = {0xF0F0F0F066};
   const byte slaveAddress[5] = {'R','x','A','A','A'};
   const byte masterAddress[5] = {'T','X','a','a','a'};
+  int _tx_rate_set = 100;
+  int _tx_rate_monitor;
 };
 
 #endif

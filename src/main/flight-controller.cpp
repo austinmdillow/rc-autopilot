@@ -7,38 +7,17 @@
 #include "duet.cpp"
 #include "AcPID.cpp"
 //#include <PID_v1.h>
-#include "Flight_radio.h"
+#include "Flight_Radio.h"
 #include "Flight_Navigation.h"
 #include <PID_Em.h>
 #include <RF24.h>
 #include <SPI.h>
 //#include <RF24.h>
-const String VERSION = "1.0";
+const String VERSION = "0.2";
 byte addressesQ[][6] = {"1Node","2Node"};
 
 const int internal_led_pin = 13;
 bool internal_led_state = true;
-
-/*
-struct Remote {
-  byte target_id = 1;
-  byte pot_1;
-  byte pot_2;
-  byte stick_L_x;
-  byte stick_L_y;
-  bool stick_L_b;
-  byte stick_R_x;
-  byte stick_R_y;
-  bool stick_R_b;
-  bool estop;
-  bool switch_1;
-  bool switch_2;
-  bool trim_U;
-  bool trim_D;
-  bool trim_L;
-  bool trim_R;
-};
-*/
 
 //Remote data;
 //RF24 flightRadio(9,10);
@@ -68,7 +47,7 @@ void pidSetup();
 
 
 Duet plane;
-Flight_radio flight_radio(8,9);
+Flight_Radio flight_radio(8,9);
 //Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
 Flight_Navigation flight_nav;
 
@@ -180,7 +159,7 @@ void setup() {
   delay(1000);
   // put your setup code here, to run once:
   pidSetup();
-  flight_radio.radio_setup();
+  flight_radio.begin();
   flight_nav.setup();
   debuggingSetup();
   pinMode(internal_led_pin, OUTPUT); // set the mode of the built in LED

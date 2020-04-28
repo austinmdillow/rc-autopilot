@@ -1,5 +1,5 @@
 /**
- * @file Iaircraft.cpp
+ * @file Aircraft_Interface.cpp
  * @author My Self
  * @date 9 Sep 2012
  * @brief File containing example of doxygen usage for quick reference.
@@ -12,7 +12,7 @@
  */
 
 #include <Arduino.h>
-class Iaircraft {
+class Aircraft_Interface {
     public:
     const int MAX_INPUT = 100;
     
