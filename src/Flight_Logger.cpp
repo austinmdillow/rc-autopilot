@@ -79,16 +79,19 @@ bool Flight_Logger::logGPS(gps_t* gps_data) {
     num_logs++;
     _gps_rate_monitor = _gps_rate_monitor * (1-rate_alpha) + 1000.0/(current_millis - last_gps_log_time) * rate_alpha;
     last_gps_log_time = current_millis;
+    return true;
+   } else {
+     return false;
    }
 }
 
-bool Flight_Logger::logIMU(telemetry_t* telemetry_data) {
+bool Flight_Logger::logIMU(imu_t* imu_data) {
   unsigned long current_millis = millis();
   static unsigned long last_imu_log_time = millis();
   if (current_millis - last_imu_log_time > _imu_period) {
-    char telemetry_str[125];
-    sprintf(telemetry_str, "%d;%s;A;%03.3f,%.3f,%.3f;G;%03.3f,%.3f,%.3f;M;%03.3f,%.3f,%.3f", current_millis, String("IMU").c_str(), telemetry_data->acceleration.x, telemetry_data->acceleration.y, telemetry_data->acceleration.z, telemetry_data->gyro.x, telemetry_data->gyro.y, telemetry_data->gyro.z, telemetry_data->magnetic.x, telemetry_data->magnetic.y, telemetry_data->magnetic.z);
-    this->logData(telemetry_str);
+    char imu_str[125];
+    sprintf(imu_str, "%d;%s;A;%03.3f,%.3f,%.3f;G;%03.3f,%.3f,%.3f;M;%03.3f,%.3f,%.3f", current_millis, String("IMU").c_str(), imu_data->acceleration.x, imu_data->acceleration.y, imu_data->acceleration.z, imu_data->gyro.x, imu_data->gyro.y, imu_data->gyro.z, imu_data->magnetic.x, imu_data->magnetic.y, imu_data->magnetic.z);
+    this->logData(imu_str);
     num_logs++;
     _imu_rate_monitor = _imu_rate_monitor * (1-rate_alpha) + 1000.0/(current_millis - last_imu_log_time) * rate_alpha;
     last_imu_log_time = current_millis;

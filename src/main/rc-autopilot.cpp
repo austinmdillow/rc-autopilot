@@ -26,6 +26,8 @@ void pidSetup();
 Aeroscout plane;
 Flight_Controller pilot;
 Flight_Radio flight_radio(8,9);
+Flight_Telemetry flight_tel;
+flight_sensors_t sensor_data;
 //Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
 
 
@@ -44,7 +46,8 @@ enum Flying_states {
   Takeoff,
   Cruise,
   Stall,
-  Test
+  Test,
+  Wait
 };
 
 Flying_states flying_state = Test;
@@ -57,6 +60,32 @@ struct Error {
 
 void sensorDebug() {
   //flight_nav.displaySensorDetails();
+  unsigned long start_time = millis();
+  int loop_time = 1000;
+  unsigned long count;
+  while(millis() - start_time < loop_time){
+    flight_tel.getSensors(&sensor_data);
+    count++;
+    flight_tel.printRateMonitors();
+  }
+  flight_tel.printRateMonitors();
+  Serial.println(count);
+  Serial.print("IMU "); Serial.println(flight_tel.imu_count);
+  Serial.print("GPS "); Serial.println(flight_tel.gps_count);
+  Serial.print("BME "); Serial.println(flight_tel.bme280_count);
+  flying_state = Wait;
+}
+
+void sensorDump() {
+  unsigned long start_time = millis();
+  int loop_time = 10000;
+  unsigned long count;
+  while(millis() - start_time < loop_time) {
+    flight_tel.getSensors(&sensor_data);
+    //flight_tel.printBME280();
+    flight_tel.printTelemetry();
+  }
+  flying_state = Wait;
 }
 
 void test_controller() {
@@ -134,7 +163,7 @@ void debuggingSetup() {
 
 void setup() {
   delay(1000);
-  // put your setup code here, to run once:
+  flight_tel.begin();
   pidSetup();
   debuggingSetup();
   pinMode(internal_led_pin, OUTPUT); // set the mode of the built in LED
@@ -143,7 +172,8 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("top of loop");
+  //Serial.println("top of loop");
+  delay(1000);
   scheduled_tasks();
   /*
   if (flying_state == Landed) {
@@ -158,8 +188,13 @@ void loop() {
       manualControl();
       break;
     case Test:
-      test_controller();
+      //test_controller();
       //sensorDebug();
+      sensorDump();
+      break;
+    case Wait:
+    Serial.println("Done");
+      delay(10000);
       break;
     default:
       manualControl();
