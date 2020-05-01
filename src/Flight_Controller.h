@@ -24,17 +24,17 @@ class Flight_Controller {
     void pidSetup();
     flight_sensors_t* sensor_data;
     // Define PID parameters and IO for PID control
-    double roll_input = 0, roll_output = 0;
-    double roll_setpoint;
-    double roll_kp=5, roll_ki=1, roll_kd=1;
+    float roll_input = 1, roll_output;
+    float roll_setpoint;
+    float roll_kp=5, roll_ki=1, roll_kd=1;
 
-    double pitch_input = 0, pitch_output = 0;
-    double pitch_setpoint;
-    double pitch_kp=5, pitch_ki=1, pitch_kd=1;
+    float pitch_input = 0, pitch_output = 0;
+    float pitch_setpoint;
+    float pitch_kp=5, pitch_ki=1, pitch_kd=1;
 
     //PID rollControl2(&roll_input, &roll_output, roll_setpoint, roll_kp, roll_ki, roll_kd, DIRECT);
-    PID_Em rollControl = PID_Em(&roll_input, &roll_output, &roll_setpoint, roll_kp, roll_ki, roll_kd);
-    PID_Em pitchControl = PID_Em(&pitch_input, &pitch_output, &pitch_setpoint, pitch_kp, pitch_ki, pitch_kd);
+    PID_Em rollControl;
+    //PID_Em pitchControl = PID_Em(&pitch_input, &pitch_output, &pitch_setpoint, pitch_kp, pitch_ki, pitch_kd);
 
 };
 

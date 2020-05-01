@@ -132,8 +132,12 @@ bool performCruise(int altitude_target, int speed) {
 
 bool climbToAltitude(int alt) {
   static unsigned long function_start = millis();
-  if (millis() - function_start > 3000) {
+
+  pilot.performCruise(100, 10);
+
+  if (millis() - function_start > 10000) {
     return true;
+
   }
     return false;
 
@@ -157,12 +161,14 @@ void setup() {
   pinMode(internal_led_pin, OUTPUT); // set the mode of the built in LED
   Serial.println("end of setup");
   
+  flying_state = Cruise;
 }
 
 void loop() {
   //Serial.println("top of loop");
-  delay(1000);
+  delay(10);
   scheduled_tasks();
+  Serial.println(sensor_data.imu.rpy[0]);
   /*
   if (flying_state == Landed) {
     performTakeoff();
@@ -182,14 +188,14 @@ void loop() {
       sensorDump();
       break;
     case Wait:
-    Serial.println("Done");
+      //Serial.println("Done");
       delay(10000);
       break;
     case Cruise:
       Serial.println("State is Cruise");
-       if (climbToAltitude(300)) {
-         flying_state = Manual;
-       }
+      if (climbToAltitude(300)) {
+         flying_state = Wait;
+      }
        break;
     default:
       manualControl();
