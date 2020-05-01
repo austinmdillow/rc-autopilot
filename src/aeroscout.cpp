@@ -11,6 +11,8 @@
  * @see http://www.stack.nl/~dimitri/doxygen/commands.html
  */
 
+#ifndef Aeroscout_cpp
+#define Aeroscout_cpp
 
 #include "Aircraft_Interface.cpp"
 #include <Servo.h>
@@ -28,6 +30,9 @@ private:
     int motor_L_pwm;
     int motor_R_pwm;
     int elevator_setpoint;
+
+    const int ELEVATOR_SERVO_MAX = 100;
+    const int ELEVATOR_SERVO_MIN = 80;
 
     const int K_aileron = 2; ///< how much an aileron input contributes to throttle adjustments
 
@@ -57,7 +62,7 @@ public:
     /** 
      * Initialize all electronic hardware on the aircraft.
      */
-    void init() {
+    void begin() {
         elevator_servo.attach(elevator_pin);
     }
 
@@ -78,7 +83,7 @@ public:
         fc.aileron_trim = aileron_trim_in;
     }
 
-    void updateElevator(int elevator_in) {
+    void updateElevator(float elevator_in) {
         fc.elevator = elevator_in;
     }
 
@@ -108,10 +113,10 @@ public:
         writeMotors();
     }
 
-    void commandElevator(int elevator_in) {
+    void commandElevator(float elevator_in) {
         updateElevator(elevator_in);
-        int elevator_net = constrain(fc.elevator + fc.elevator_trim, 0, MAX_INPUT);
-        elevator_servo.write(map(elevator_net, 0, MAX_INPUT, 90, 91));
+        int elevator_net = constrain(fc.elevator + fc.elevator_trim, MIN_INPUT, MAX_INPUT);
+        elevator_servo.write(map(elevator_net, MIN_INPUT, MAX_INPUT, ELEVATOR_SERVO_MIN, ELEVATOR_SERVO_MAX)); 
     }
 
     void commandAileron(int aileron_in) {
@@ -126,3 +131,5 @@ public:
     }
 
 };
+
+#endif

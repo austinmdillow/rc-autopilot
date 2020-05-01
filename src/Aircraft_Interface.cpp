@@ -11,10 +11,14 @@
  * @see http://www.stack.nl/~dimitri/doxygen/commands.html
  */
 
+#ifndef Aircraft_Interface_cpp
+#define Aircraft_Interface_cpp
+
 #include <Arduino.h>
 class Aircraft_Interface {
     public:
     const int MAX_INPUT = 100;
+    const int MIN_INPUT = -100;
     
     struct Flight_controls {
         int throttle;
@@ -34,7 +38,7 @@ class Aircraft_Interface {
     virtual void updateThrottle(int) = 0;
     virtual void updateAileron(int aileron_in) = 0;
     virtual void updateAileronTrim(int aileron_trim_in) = 0;
-    virtual void updateElevator(int elevator_in) = 0;
+    virtual void updateElevator(float elevator_in) = 0;
     virtual void updateElevatorTrim(int elevator_trim_in) = 0;
     virtual void updateRudder(int rudder_in) = 0;
     virtual void updateRudderTrim(int rudder_trim_in) = 0;
@@ -44,3 +48,5 @@ class Aircraft_Interface {
     //~Iaircraft();
     
 };
+
+#endif

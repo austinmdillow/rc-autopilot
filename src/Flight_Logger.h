@@ -17,6 +17,7 @@ class Flight_Logger {
     void logData(char* saved_data);
     bool logGPS(gps_t* gps);
     bool logIMU(imu_t* tel);
+    void logSensors(flight_sensors_t* fls);
     void setGPSLoggingRate(int hz);
     void setIMULoggingRate(int hz);
     void loggerDumpSerial();

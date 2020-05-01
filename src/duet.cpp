@@ -57,7 +57,7 @@ public:
     /** 
      * Initialize all electronic hardware on the aircraft.
      */
-    void init() {
+    void begin() {
         elevator_servo.attach(elevator_pin);
     }
 

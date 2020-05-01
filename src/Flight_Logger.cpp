@@ -98,6 +98,11 @@ bool Flight_Logger::logIMU(imu_t* imu_data) {
    }
 }
 
+void Flight_Logger::logSensors(flight_sensors_t* fls) {
+  this->logIMU(&(fls->imu));
+  this->logGPS(&(fls->gps));
+}
+
 void Flight_Logger::loggerDumpSerial() {
   Serial.print("===Dumping SD Card ");
   Serial.print(_filename);

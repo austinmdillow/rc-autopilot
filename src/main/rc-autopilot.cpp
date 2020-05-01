@@ -4,40 +4,39 @@
  */
 
 #include <Arduino.h>
-#include "aeroscout.cpp"
-#include "AcPID.cpp"
-//#include <PID_v1.h>
-#include <PID_Em.h>
 #include "Flight_Telemetry.h"
 #include "Flight_Logger.h"
 #include "Flight_Radio.h"
 #include "Flight_Controller.h"
 
+
 const String VERSION = "0.2";
+
+#define VBATPIN A6
 
 const int internal_led_pin = 13;
 bool internal_led_state = true;
 
+const int chipSelect = 11;
+bool SD_VALID = false;
+const int CE = 13;
+const int CSN = 12;
+
 
 void manualControl();
 void pidSetup();
+void printBatteryDebug();
 
-
-Aeroscout plane;
-Flight_Controller pilot;
-Flight_Radio flight_radio(8,9);
-Flight_Telemetry flight_tel;
 flight_sensors_t sensor_data;
+Flight_Controller pilot(&sensor_data);
+Flight_Radio radio(CE, CSN);
+Flight_Logger logger(chipSelect);
+Flight_Telemetry flight_tel;
+
 //Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
 
 
-// Define PID parameters and IO for PID control
-double roll_input, roll_output;
-double roll_setpoint;
-double roll_kp=5, roll_ki=1, roll_kd=1;
 
-//PID rollControl2(&roll_input, &roll_output, roll_setpoint, roll_kp, roll_ki, roll_kd, DIRECT);
-PID_Em rollControl(&roll_input, &roll_output, &roll_setpoint, roll_kp, roll_ki, roll_kd);
 
 
 enum Flying_states {
@@ -91,10 +90,6 @@ void sensorDump() {
 void test_controller() {
   
   static int count = 0;
-  plane.commandElevator(0);
-  plane.commandAileron(5);
-  plane.commandThrottle(count);
-  Serial.println(plane.fc.throttle);
   count++;
   //flight_nav.sensorDebug();
   //flight_nav.displaySensorDetails();
@@ -106,13 +101,7 @@ void manualControl() {
   //Serial.print(data_rx.target_id);
 }
 
-void performTakeoff() {
-  plane.updateThrottle(100);
-  plane.updateElevator(20);
-  delay(500);
-  plane.updateElevator(0);
 
-}
 
 void scheduled_tasks() {
   static unsigned long last_blink_time = millis();
@@ -125,6 +114,8 @@ void scheduled_tasks() {
     last_blink_time = millis();
   }
 
+  flight_tel.getSensors(&sensor_data);
+
 }
 
 double getRoll() {
@@ -132,24 +123,20 @@ double getRoll() {
 }
 
 //! Does nothing
-void performCruise(int altitude, int speed) {
+bool performCruise(int altitude_target, int speed) {
+  float altitude_error = sensor_data.bme280.altitude - altitude_target;
 
 }
 
-void maintainBankAngle(int bank_angle) {
-  rollControl.newSetpoint(bank_angle);
-  roll_input = getRoll();
-  rollControl.compute();
-  plane.commandAileron(roll_output);
-}
 
-void errorHandler() {
 
-}
+bool climbToAltitude(int alt) {
+  static unsigned long function_start = millis();
+  if (millis() - function_start > 3000) {
+    return true;
+  }
+    return false;
 
-void pidSetup() {
-  rollControl.setOutputContraints(-90, 90);
-  rollControl.setIntegralWindup(10, 20);
 }
 
 void debuggingSetup() {
@@ -157,14 +144,15 @@ void debuggingSetup() {
   Serial.println("===== rc-autopilot =====");
   Serial.print("Version: ");
   Serial.println(VERSION);
+  printBatteryDebug();
+
   delay(3000);
-  Serial.print(45);
 }
 
 void setup() {
   delay(1000);
   flight_tel.begin();
-  pidSetup();
+  pilot.begin();
   debuggingSetup();
   pinMode(internal_led_pin, OUTPUT); // set the mode of the built in LED
   Serial.println("end of setup");
@@ -184,7 +172,8 @@ void loop() {
   */
   
   switch (flying_state) {
-    case Manual: 
+    case Manual:
+      Serial.println("State is manual");
       manualControl();
       break;
     case Test:
@@ -196,9 +185,35 @@ void loop() {
     Serial.println("Done");
       delay(10000);
       break;
+    case Cruise:
+      Serial.println("State is Cruise");
+       if (climbToAltitude(300)) {
+         flying_state = Manual;
+       }
+       break;
     default:
       manualControl();
   }
   
+}
+
+
+
+
+
+/**
+ * Board Functions
+*/
+
+
+
+float boardBatteryVoltage() {
+  float battery_voltage = 2 * 3.3 / 1024.0 * analogRead(VBATPIN);
+  Serial.print("VBAT: "); Serial.println(battery_voltage);
+  return battery_voltage;
+}
+
+void printBatteryDebug() {
+  Serial.print("Bat V: "); Serial.println(boardBatteryVoltage());
 }
 
