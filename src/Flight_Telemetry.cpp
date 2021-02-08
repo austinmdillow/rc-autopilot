@@ -18,8 +18,8 @@ bool Flight_Telemetry::begin() {
   
   Serial.println("Flight Telemetry module Setup Starting");
   //Adafruit_GPS GPS = GPS(&GPSSerial);
-  Adafruit_FXAS21002C gyro = Adafruit_FXAS21002C(0x0021002C);
-  Adafruit_FXOS8700 accelmag = Adafruit_FXOS8700(0x8700A, 0x8700B);
+  gyro = Adafruit_FXAS21002C(0x0021002C);
+  accelmag = Adafruit_FXOS8700(0x8700A, 0x8700B);
   filter.begin();
   if(!gyro.begin()) {
     Serial.println("Ooops, no FXAS21002C detected ... Check your wiring!");
@@ -386,6 +386,17 @@ void Flight_Telemetry::displaySensorDetails(void) {
 
 void Flight_Telemetry::printRateMonitors() {
   Serial.print("IMU, GPS, BME rate: "); Serial.print(this->_imu_rate_monitor); Serial.print(" "); Serial.print(this->_gps_rate_monitor); Serial.print(" "); Serial.println(this->_bme280_rate_monitor);
+}
+
+void Flight_Telemetry::printAHRS() {
+  float roll = filter.getRoll();
+    float pitch = filter.getPitch();
+    float heading = filter.getYaw();
+    Serial.print(roll);
+    Serial.print(" ");
+    Serial.print(pitch);
+    Serial.print(" ");
+    Serial.println(heading);
 }
 
 

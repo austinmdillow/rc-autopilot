@@ -14,15 +14,16 @@ Flight_Controller::Flight_Controller(flight_sensors_t* sensor_data_in) : rollCon
 void Flight_Controller::begin() {
   plane.begin();
   surfaceTest();
+  this->pidSetup();
   //PID_Em rollControl = PID_Em(&roll_input, &roll_output, &roll_setpoint, roll_kp, roll_ki, roll_kd);
 }
 
 
 void Flight_Controller::maintainBankAngle(int bank_angle) {
   
-  //rollControl.newSetpoint(bank_angle);
+  rollControl.newSetpoint(bank_angle);
   //roll_input = getRoll();
-  //rollControl.compute();
+  rollControl.compute();
   plane.commandAileron(roll_output);
 }
 
@@ -30,10 +31,10 @@ void Flight_Controller::maintainBankAngle(int bank_angle) {
 bool Flight_Controller::performCruise(int altitude_target, int speed) {
   float altitude_error = sensor_data->bme280.altitude - altitude_target;
   roll_input = sensor_data->imu.rpy[0];
-  rollControl.newSetpoint(4);
+  rollControl.newSetpoint(0);
   rollControl.compute();
   if (abs(altitude_error) > 5) {
-    Serial.println("not at right altitude");
+    //Serial.println("not at right altitude");
   }
 
   Serial.print("roll_output function val: ");Serial.println(roll_output);

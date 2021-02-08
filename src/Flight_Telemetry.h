@@ -62,6 +62,7 @@ class Flight_Telemetry {
     void updateBME280();
     void getBME280(bme280_t* bme_in);
     void printRateMonitors();
+    void printAHRS();
     unsigned long imu_count;
     unsigned long gps_count;
     unsigned long bme280_count;

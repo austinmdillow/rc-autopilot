@@ -77,12 +77,14 @@ void sensorDebug() {
 
 void sensorDump() {
   unsigned long start_time = millis();
-  int loop_time = 10000;
+  int loop_time = 20000;
   unsigned long count;
   while(millis() - start_time < loop_time) {
+    delay(10);
     flight_tel.getSensors(&sensor_data);
     //flight_tel.printBME280();
-    flight_tel.printTelemetry();
+    //flight_tel.printTelemetry();
+    flight_tel.printAHRS();
   }
   flying_state = Wait;
 }
@@ -135,7 +137,7 @@ bool climbToAltitude(int alt) {
 
   pilot.performCruise(100, 10);
 
-  if (millis() - function_start > 10000) {
+  if (millis() - function_start > 20000) {
     return true;
 
   }
@@ -154,7 +156,7 @@ void debuggingSetup() {
 }
 
 void setup() {
-  delay(1000);
+  delay(2000);
   flight_tel.begin();
   pilot.begin();
   debuggingSetup();
@@ -184,7 +186,6 @@ void loop() {
       break;
     case Test:
       //test_controller();
-      //sensorDebug();
       sensorDump();
       break;
     case Wait:
